@@ -9,6 +9,7 @@ import retrofit2.http.PATCH;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
+import retrofit2.http.Url;
 
 public interface JsonPlaceHolderAPI {
 
@@ -19,6 +20,9 @@ public interface JsonPlaceHolderAPI {
     //https://jsonplaceholder.typicode.com/posts/2/comments
     @GET("posts/{id}/comments")
     Call<List<Comment>> getComments(@Path("id") int postId);
+
+    @GET
+    Call<List<Comment>> getCommentsUrl(@Url String url);
 
     //https://jsonplaceholder.typicode.com/posts?userId=1
     @GET("posts")
@@ -51,4 +55,5 @@ public interface JsonPlaceHolderAPI {
     //https://jsonplaceholder.typicode.com/posts?_order=desc&userId=1&_sort=id
     @GET("posts")
     Call<List<Post>> getPostMap(@QueryMap Map<String, String> parameters);
+
 }

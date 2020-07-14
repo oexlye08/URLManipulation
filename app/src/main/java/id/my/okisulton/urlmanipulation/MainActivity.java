@@ -35,8 +35,9 @@ public class MainActivity extends AppCompatActivity {
 
         jsonPlaceHolderAPI = retrofit.create(JsonPlaceHolderAPI.class);
 
-        getPosts();
+//        getPosts();
 //        getComments();
+        getCommentsUrl();
 //        getPost();
 //        getPos();
 //        getPosDouble();
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 //        getPostMap();
 
     }
+
 
     private void getPosts() {
         Call<List<Post>> call = jsonPlaceHolderAPI.getPosts();
@@ -80,6 +82,40 @@ public class MainActivity extends AppCompatActivity {
         call.enqueue(new Callback<List<Comment>>() {
             @Override
             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                assert response.body() !=null;
+                Log.d("tampil", response.toString());
+                if (!response.isSuccessful()){
+                    tv_result.setText("Code : " + response.code());
+                    return;
+                }
+
+                List<Comment> comments = response.body();
+                for (Comment comment : comments){
+                    String content = "";
+                    content += "ID : " +comment.getId() + "\n";
+                    content += "Post ID : " +comment.getPosId() + "\n";
+                    content += "Name : " +comment.getName() + "\n";
+                    content += "Email : " +comment.getEmail() + "\n";
+                    content += "Text : " +comment.getText() + "\n";
+
+                    tv_result.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void getCommentsUrl() {
+        Call<List<Comment>> call = jsonPlaceHolderAPI.getCommentsUrl("posts/3/comments");
+        call.enqueue(new Callback<List<Comment>>() {
+            @Override
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                assert response.body() !=null;
+                Log.d("tampil", response.toString());
                 if (!response.isSuccessful()){
                     tv_result.setText("Code : " + response.code());
                     return;
