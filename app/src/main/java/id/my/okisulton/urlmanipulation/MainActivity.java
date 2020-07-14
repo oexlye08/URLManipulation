@@ -3,6 +3,7 @@ package id.my.okisulton.urlmanipulation;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TextView;
 
 import java.util.HashMap;
@@ -34,8 +35,44 @@ public class MainActivity extends AppCompatActivity {
 
         jsonPlaceHolderAPI = retrofit.create(JsonPlaceHolderAPI.class);
 
-        getPost();
+        getPosts();
 //        getComments();
+//        getPost();
+//        getPos();
+//        getPosDouble();
+//        getPosAray();
+//        getPostMap();
+
+    }
+
+    private void getPosts() {
+        Call<List<Post>> call = jsonPlaceHolderAPI.getPosts();
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                if (!response.isSuccessful()){
+                    tv_result.setText("Code : " +response.body());
+                    return;
+                }
+
+                List<Post> posts = response.body();
+
+                for (Post post : posts) {
+                    String content = "";
+                    content += "ID : " +post.getId() +"\n";
+                    content += "User ID : " +post.getUserId() +"\n";
+                    content += "Title : " +post.getTitle() +"\n";
+                    content += "Text : " +post.getText() +"\n";
+
+                    tv_result.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
     }
 
     private void getComments() {
@@ -69,17 +106,143 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getPost() {
+        Call<List<Post>> call = jsonPlaceHolderAPI.getPost(4);
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                if (!response.isSuccessful()){
+                    tv_result.setText("Code : " +response.body());
+                    return;
+                }
+
+                List<Post> posts = response.body();
+
+                for (Post post : posts) {
+                    String content = "";
+                    content += "ID : " +post.getId() +"\n";
+                    content += "User ID : " +post.getUserId() +"\n";
+                    content += "Title : " +post.getTitle() +"\n";
+                    content += "Text : " +post.getText() +"\n";
+
+                    tv_result.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+
+    }
+
+    private void getPos() {
+        Call<List<Post>> call = jsonPlaceHolderAPI.getPos(4, "id", "desc");
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                if (!response.isSuccessful()){
+                    tv_result.setText("Code : " +response.body());
+                    return;
+                }
+
+                List<Post> posts = response.body();
+
+                for (Post post : posts) {
+                    String content = "";
+                    content += "ID : " +post.getId() +"\n";
+                    content += "User ID : " +post.getUserId() +"\n";
+                    content += "Title : " +post.getTitle() +"\n";
+                    content += "Text : " +post.getText() +"\n";
+
+                    tv_result.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+
+    }
+
+    private void getPosDouble() {
+        Call<List<Post>> call = jsonPlaceHolderAPI.getPosDouble(2,4, "id", "desc");
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                assert response.body() != null;
+                Log.d("tampil", response.toString());
+                if (!response.isSuccessful()){
+                    tv_result.setText("Code : " +response.body());
+                    return;
+                }
+
+
+                List<Post> posts = response.body();
+
+                for (Post post : posts) {
+                    String content = "";
+                    content += "ID : " +post.getId() +"\n";
+                    content += "User ID : " +post.getUserId() +"\n";
+                    content += "Title : " +post.getTitle() +"\n";
+                    content += "Text : " +post.getText() +"\n";
+
+                    tv_result.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void getPosAray() {
+        Call<List<Post>> call = jsonPlaceHolderAPI.getPosAray(new Integer[]{1,2,3} ,"id", "desc");
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                assert response.body() !=null;
+                Log.d("tampil", response.toString());
+                if (!response.isSuccessful()){
+                    tv_result.setText("Code : " +response.body());
+                    return;
+                }
+
+                List<Post> posts = response.body();
+
+                for (Post post : posts) {
+                    String content = "";
+                    content += "ID : " +post.getId() +"\n";
+                    content += "User ID : " +post.getUserId() +"\n";
+                    content += "Title : " +post.getTitle() +"\n";
+                    content += "Text : " +post.getText() +"\n";
+
+                    tv_result.append(content);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void getPostMap() {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("userId", "1");
         parameters.put("_sort", "id");
         parameters.put("_order", "desc");
-//        Call<List<Post>> call = jsonPlaceHolderAPI.getPost(1);
-//        Call<List<Post>> call = jsonPlaceHolderAPI.getPos(1, "id", "desc");
-//        Call<List<Post>> call = jsonPlaceHolderAPI.getPosAray(new Integer[]{3,1}, "id", "desc");
         Call<List<Post>> call = jsonPlaceHolderAPI.getPostMap(parameters);
         call.enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                assert response.body() !=null;
+                Log.d("tampil", response.toString());
 
                 if (!response.isSuccessful()){
                     tv_result.setText("Code : " +response.body());
