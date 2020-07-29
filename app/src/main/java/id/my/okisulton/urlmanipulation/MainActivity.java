@@ -35,17 +35,27 @@ public class MainActivity extends AppCompatActivity {
 
         jsonPlaceHolderAPI = retrofit.create(JsonPlaceHolderAPI.class);
 
+        /**
+         * GET
+         * **/
 //        getPosts();
 //        getComments();
-        getCommentsUrl();
+//        getCommentsUrl();
 //        getPost();
 //        getPos();
 //        getPosDouble();
 //        getPosAray();
 //        getPostMap();
 
-    }
+        /**
+         * POST
+         * **/
 
+//        createPosts();
+//        createPostFormUrl();
+        createPostHashMap();
+
+    }
 
     private void getPosts() {
         Call<List<Post>> call = jsonPlaceHolderAPI.getPosts();
@@ -304,4 +314,107 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private void createPosts() {
+        Post post = new Post(23,"new title", "new Body");
+        Call<Post> call = jsonPlaceHolderAPI.createPosts(post);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+
+                assert response.body() !=null;
+                Log.d("tampil", response.body().getText());
+
+                if (!response.isSuccessful()){
+                    tv_result.setText("code : " +response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                String content = "";
+                content += "Code : " + response.code() + "\n";
+                content += "ID : " + postResponse.getId() + "\n";
+                content += "User Id : " + postResponse.getUserId() + "\n";
+                content += "Title : " + postResponse.getTitle() + "\n";
+                content += "Text : " + postResponse.getText() + "\n\n";
+
+                tv_result.setText(content);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+    }
+
+
+    private void createPostFormUrl() {
+        Call<Post> call = jsonPlaceHolderAPI.createPostFormUrl(23, "jajal title", "jajal text");
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (!response.isSuccessful()){
+                    tv_result.setText(response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+                String content = "";
+                content += "Code : " + response.code() + "\n";
+                content += "ID : " + postResponse.getId() + "\n";
+                content += "User Id : " + postResponse.getUserId() + "\n";
+                content += "Title : " + postResponse.getTitle() + "\n";
+                content += "Text : " + postResponse.getText() + "\n\n";
+
+                tv_result.setText(content);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+    }
+
+    private void createPostHashMap() {
+
+        Map<String, String> fields = new HashMap<>();
+        fields.put("userId", "50");
+        fields.put("title", "jajal title map");
+        fields.put("body", "jajal text map");
+
+        Call<Post> call = jsonPlaceHolderAPI.createPostHashMap(fields);
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (!response.isSuccessful()){
+                    tv_result.setText(response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                String content = "";
+                content += "Code : " + response.code() + "\n";
+                content += "Id : " + postResponse.getId() + "\n";
+                content += "User Id : " + postResponse.getUserId() + "\n";
+                content += "Title : " + postResponse.getTitle() + "\n";
+                content += "Text : " + postResponse.getText() + "\n\n";
+
+                tv_result.setText(content);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+    }
+
+
 }

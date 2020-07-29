@@ -4,8 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 import retrofit2.http.QueryMap;
@@ -56,4 +61,21 @@ public interface JsonPlaceHolderAPI {
     @GET("posts")
     Call<List<Post>> getPostMap(@QueryMap Map<String, String> parameters);
 
+    //https://jsonplaceholder.typicode.com/posts
+    @POST("posts")
+    Call<Post> createPosts(@Body Post post);
+
+    //https://jsonplaceholder.typicode.com/posts
+    @FormUrlEncoded
+    @POST("posts")
+    Call<Post> createPostFormUrl(
+            @Field("userId") int userId,
+            @Field("title") String title,
+            @Field("body") String text
+    );
+
+    //https://jsonplaceholder.typicode.com/posts
+    @FormUrlEncoded
+    @POST("posts")
+    Call<Post> createPostHashMap(@FieldMap Map<String, String> fields);
 }
