@@ -6,10 +6,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.Interceptor;
+import okhttp3.OkHttp;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -28,10 +39,32 @@ public class MainActivity extends AppCompatActivity {
 
         tv_result = findViewById(R.id.text_view_result);
 
+        Gson gson = new GsonBuilder().serializeNulls().create();
+
+        HttpLoggingInterceptor httpLoggingInterceptor = new HttpLoggingInterceptor();
+        httpLoggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @NotNull
+                    @Override
+                    public okhttp3.Response intercept(@NotNull Chain chain) throws IOException {
+                        Request originalRequest = chain.request();
+                        Request newRequest = originalRequest.newBuilder()
+                                .header("Interceptor-header", "xyz")
+                                .build();
+                        return chain.proceed(newRequest);
+                    }
+                })
+                .addInterceptor(httpLoggingInterceptor)
+                .build();
+
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://jsonplaceholder.typicode.com/")
                 .addConverterFactory(GsonConverterFactory.create())
+                .client(okHttpClient)
                 .build();
+
 
         jsonPlaceHolderAPI = retrofit.create(JsonPlaceHolderAPI.class);
 
@@ -56,7 +89,10 @@ public class MainActivity extends AppCompatActivity {
 //        createPostHashMap();
 //        putPost();
 //        patchPost();
-        deletePost();
+//        deletePost();
+//        putPostHeader();
+        patchPostHeader();
+
     }
 
     private void getPosts() {
@@ -451,7 +487,7 @@ public class MainActivity extends AppCompatActivity {
     private void patchPost() {
         Post post = new Post(5, null, "nothing wkwkwk");
 
-        Call<Post> call = jsonPlaceHolderAPI.patchPost(5, post);
+        Call<Post> call = jsonPlaceHolderAPI.patchPost(7, post);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
@@ -494,4 +530,70 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+
+
+    private void putPostHeader() {
+        Post post = new Post(12,null, "header jajal");
+        Call<Post> call = jsonPlaceHolderAPI.putPostHeader("abc",5, post);
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (!response.isSuccessful()){
+                    tv_result.setText(response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                String content = "";
+                content += "Code : " + response.code() + "\n";
+                content += "Id : " + postResponse.getId() + "\n";
+                content += "User Id : " + postResponse.getUserId() + "\n";
+                content += "Title : " + postResponse.getTitle() + "\n";
+                content += "Text : " + postResponse.getText() + "\n\n";
+
+                tv_result.setText(content);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+    }
+
+
+    private void patchPostHeader() {
+        Post post = new Post(12,null, "header jajal");
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Header-1", "def");
+        headers.put("Header-2", "ghi");
+        Call<Post> call = jsonPlaceHolderAPI.patchPostHeader(headers,5, post);
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                if (!response.isSuccessful()){
+                    tv_result.setText(response.code());
+                    return;
+                }
+
+                Post postResponse = response.body();
+
+                String content = "";
+                content += "Code : " + response.code() + "\n";
+                content += "Id : " + postResponse.getId() + "\n";
+                content += "User Id : " + postResponse.getUserId() + "\n";
+                content += "Title : " + postResponse.getTitle() + "\n";
+                content += "Text : " + postResponse.getText() + "\n\n";
+
+                tv_result.setText(content);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+                tv_result.setText(t.getMessage());
+            }
+        });
+    }
+
 }
